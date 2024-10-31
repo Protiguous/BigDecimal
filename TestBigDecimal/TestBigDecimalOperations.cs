@@ -9,11 +9,12 @@ using NUnit.Framework;
 namespace TestBigDecimal
 {
 
+	[Parallelizable(ParallelScope.All)]
 	[TestFixture]
 	[Culture("en-US,ru-RU")]
 	public class TestBigDecimalOperations
 	{
-		private NumberFormatInfo Format { get { return Thread.CurrentThread.CurrentCulture.NumberFormat; } }
+		private NumberFormatInfo Format { get; } = Thread.CurrentThread.CurrentCulture.NumberFormat;
 
 		[Test]
 		public void TestAddition001()
@@ -23,7 +24,7 @@ namespace TestBigDecimal
 
 			var actual = number1 + 0x7FFFFFFF;
 
-			Assert.AreEqual(expected, actual);
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
@@ -85,7 +86,7 @@ namespace TestBigDecimal
 
 			var actual = result.ToString();
 
-			Assert.AreEqual(expected, actual);
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
@@ -261,7 +262,7 @@ namespace TestBigDecimal
 			string expected = "50";
 			string actual = value.ToString();
 
-			Assert.AreEqual(expected, actual);
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
@@ -389,7 +390,7 @@ namespace TestBigDecimal
 
 			var actual = BigDecimal.Mod(dividend, divisor);
 
-			Assert.AreEqual(expected, actual);
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
@@ -402,7 +403,7 @@ namespace TestBigDecimal
 
 			var actual = BigDecimal.Mod(dividend, divisor);
 
-			Assert.AreEqual(expected, actual);
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
@@ -416,7 +417,7 @@ namespace TestBigDecimal
 
 			var actual = BigDecimal.Mod(dividend, divisor);
 
-			Assert.AreEqual(expected, actual);
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
@@ -432,7 +433,7 @@ namespace TestBigDecimal
 
 			var actual = BigDecimal.Mod(dividend, divisor);
 
-			Assert.AreEqual(expected, actual);
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
@@ -645,7 +646,7 @@ namespace TestBigDecimal
 
 			var actual = number - 0x7FFFFFFF;
 
-			Assert.AreEqual(expected, actual);
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 		/*
 		[Test]

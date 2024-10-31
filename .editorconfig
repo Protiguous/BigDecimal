@@ -1,18 +1,18 @@
 # Remove the line below if you want to inherit .editorconfig settings from higher directories
 root = true
 
-## Roslynator.CSharp.Analyzers
-
 [*]
-roslynator_accessibility_modifiers = explicit
-roslynator_enum_has_flag_style = method
-roslynator_object_creation_type_style = explicit|implicit|implicit_when_type_is_obvious
 
 # ReSharper properties
 resharper_csharp_max_line_length = 150
 
 # C# files
 [*.cs]
+
+## Roslynator.CSharp.Analyzers
+roslynator_accessibility_modifiers = explicit
+roslynator_enum_has_flag_style = method
+roslynator_object_creation_type_style = explicit|implicit|implicit_when_type_is_obvious
 
 #### Core EditorConfig Options ####
 
@@ -30,7 +30,6 @@ insert_final_newline = false
 # Organize usings
 dotnet_separate_import_directive_groups = false
 dotnet_sort_system_directives_first = true
-file_header_template = unset
 
 # this. and Me. preferences
 dotnet_style_qualification_for_event = false

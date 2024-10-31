@@ -80,13 +80,15 @@
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
+		<None Include="C:\Programming\Projects 2024\BigDecimal\BigDecimal\.editorconfig" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Roslynator.Analyzers" Version="4.12.0">
+		<PackageReference Include="Roslynator.Analyzers" Version="4.12.7">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="System.ValueTuple" Version="4.5.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -102,6 +104,10 @@
 			<Generator>PublicResXFileCodeGenerator</Generator>
 			<LastGenOutput>LanguageResources.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EditorConfigFiles Remove="C:\Programming\Projects 2024\BigDecimal\BigDecimal\.editorconfig" />
 	</ItemGroup>
 
 </Project>

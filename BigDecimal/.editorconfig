@@ -1,0 +1,11 @@
+# C# files
+[*.cs]
+
+## Roslynator.CSharp.Analyzers
+roslynator_accessibility_modifiers = explicit
+roslynator_enum_has_flag_style = method
+roslynator_object_creation_type_style = explicit|implicit|implicit_when_type_is_obvious
+roslynator_blank_line_between_closing_brace_and_switch_section = true
+
+dotnet_diagnostic.RCS1036.severity = none
+dotnet_diagnostic.RCS1037.severity = none

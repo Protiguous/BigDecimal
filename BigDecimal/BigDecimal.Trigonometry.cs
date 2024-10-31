@@ -6,7 +6,7 @@ using ExtendedNumerics.Properties;
 
 namespace ExtendedNumerics
 {
-	public readonly partial record struct BigDecimal : IComparable, IComparable<BigDecimal>, IComparable<Int32>, IComparable<Int32?>, IComparable<Decimal>, IComparable<Double>, IComparable<Single>
+	public readonly partial /*record*/ struct BigDecimal
 	{
 		#region Constants Approximations
 
@@ -465,7 +465,7 @@ namespace ExtendedNumerics
 		/// <summary>Arbitrary precision inverse sine function.</summary>
 		/// <param name="radians">An angle, measured in radians, in the domain of -1 &lt; x &lt; 1</param>
 		/// <param name="precision">The desired precision in terms of the number of digits to the right of the decimal.</param>
-		/// <exception cref="ArgumentOutOfRangeException">The domain of <paramref name="Arcsin" /> is -1 &lt; x &lt; 1</exception>
+		/// <exception cref="ArgumentOutOfRangeException">The domain of <see cref="Arcsin(ExtendedNumerics.BigDecimal)" /> is -1 &lt; x &lt; 1</exception>
 		/// <returns>The inverse sine of <paramref name="radians"/>, in radians.</returns>
 		/// <exception cref="ArgumentOutOfRangeException">Argument <paramref name="radians"/> outside the domain of -1 &lt; x &lt; 1.</exception>
 		public static BigDecimal Arcsin(BigDecimal radians, int precision)
@@ -653,11 +653,11 @@ namespace ExtendedNumerics
 		/// <returns>The number <see langword="e"/> raised to the specified power.</returns>
 		public static BigDecimal Exp(BigDecimal x, int precision)
 		{
-			BigDecimal sumStart = 1;
-			BigInteger counterStart = 1;
-			BigInteger jump = 1;
-			BigInteger multiplier = 1;
-			bool factorialDenominator = true;
+			BigDecimal sumStart = BigDecimal.One;
+			BigInteger counterStart = BigInteger.One;
+			BigInteger jump = BigInteger.One;
+			BigInteger multiplier = BigInteger.One;
+			const bool factorialDenominator = true;
 
 			return TrigonometricHelper.TaylorSeriesSum(x, sumStart, counterStart, jump, multiplier, factorialDenominator, precision);
 		}
@@ -709,12 +709,12 @@ namespace ExtendedNumerics
 		/// <returns>The natural (base <see langword="e" />) logarithm of the specified number.</returns>
 		internal static BigDecimal LogNatural(BigDecimal argument, int precision)
 		{
-			BigDecimal rads = argument - 1;
-			BigDecimal sumStart = 0;
-			BigInteger counterStart = 1;
-			BigInteger jump = 1;
-			BigInteger multiplier = -1;
-			bool factorialDenominator = false;
+			BigDecimal rads = argument - BigDecimal.One;
+			BigDecimal sumStart = BigDecimal.Zero;
+			BigInteger counterStart = BigInteger.One;
+			BigInteger jump = BigInteger.One;
+			BigInteger multiplier = BigInteger.MinusOne;
+			const bool factorialDenominator = false;
 
 			return TrigonometricHelper.TaylorSeriesSum(rads, sumStart, counterStart, jump, multiplier, factorialDenominator, precision);
 		}

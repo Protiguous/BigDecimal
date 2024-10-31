@@ -12,70 +12,90 @@ namespace TestBigDecimal
 	[NonParallelizable]
 	[TestFixture]
 	[Culture("en-US,ru-RU")]
-	public class TestBigDecimalCritical
+	public static class TestBigDecimalCritical
 	{
 
-		private NumberFormatInfo Format { get { return Thread.CurrentThread.CurrentCulture.NumberFormat; } }
+		private static NumberFormatInfo _format => Thread.CurrentThread.CurrentCulture.NumberFormat;
 
 		[Test]
-		public void Test47()
+		public static void Test47()
 		{
-			var π1 = 1 * BigDecimal.π;
-			var π2 = 2 * BigDecimal.π;
-			var π4 = 4 * BigDecimal.π;
-			var π8 = 8 * BigDecimal.π;
-			var sum = π1 + π2 + π4 + π8;
-			var actual = sum.WholeValue;
-			var expected = (BigInteger)47;
+			BigDecimal π1 = BigDecimal.π * 1;
+			BigDecimal π2 = BigDecimal.π * 2;
+			BigDecimal π4 = BigDecimal.π * 4;
+			BigDecimal π8 = BigDecimal.π * 8;
+			
+			BigDecimal sum = π1 + π2 + π4 + π8;
+			BigInteger actual = sum.WholeValue;
+		
+			BigInteger expected = 47;
 
-			Assert.AreEqual(expected, actual);
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
-		public void TestConstructor0()
+		public static void TestConstructor0EqualsNew0()
 		{
 			BigDecimal expected = 0;
-			var actual = new BigDecimal(0);
+			BigDecimal actual = new BigDecimal(0);
 
-			Assert.AreEqual(expected, actual);
-			Assert.AreEqual("0", actual.ToString());
+			Assert.True(BigDecimal.Equals(expected, actual));
+		}
+		
+		[Test]
+		public static void TestConstructorZeroVsNew0()
+		{
+			BigDecimal expected = BigDecimal.Zero;
+			BigDecimal actual = new BigDecimal(0);
+
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
-		public void TestConstructor1()
+		[Culture("en-US")]
+		public static void TestConstructorZeroVsStringZero()
 		{
-			BigDecimal expected = 0;
-			var actual = new BigDecimal(0, 0);
+			string expected = "0";
+			string? actual = BigDecimal.Zero.ToString();
 
-			Assert.AreEqual(expected, actual);
-			Assert.AreEqual("0", actual.ToString());
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
-		public void TestConstructor2()
+		public static void TestConstructorMantissa0Exp0()
 		{
-			BigDecimal expected = 0;
-			var actual = new BigDecimal(0, 1);
+			BigDecimal expected = BigDecimal.Zero;
+			BigDecimal actual = new BigDecimal(0, 0);
 
-			Assert.AreEqual(expected, actual);
-			Assert.AreEqual("0", actual.ToString());
+			Assert.True(BigDecimal.Equals(expected, actual));
+			//Assert.AreEqual("0", actual.ToString());
 		}
 
 		[Test]
-		public void TestConstructor001D()
+		public static void TestConstructorMantissa0Exp1()
 		{
-			var val1 = TestBigDecimalHelper.PrepareValue("0.5", this.Format);
-			var val2 = TestBigDecimalHelper.PrepareValue("0.5", this.Format);
+			BigDecimal expected = BigDecimal.Zero;
+			BigDecimal actual = new BigDecimal(0, 1);
 
-			var i = BigDecimal.Parse(val1);
-			var j = BigDecimal.Parse(val2);
+			Assert.True(BigDecimal.Equals(expected, actual));
+			//Assert.AreEqual("0", actual.ToString());
+		}
+
+		[Test]
+		public static void TestConstructor001D()
+		{
+			string? val1 = TestBigDecimalHelper.PrepareValue("0.5", _format);
+			string? val2 = TestBigDecimalHelper.PrepareValue("0.5", _format);
+
+			BigDecimal i = BigDecimal.Parse(val1);
+			BigDecimal j = BigDecimal.Parse(val2);
 
 			Assert.AreEqual(val1, i.ToString());
 			Assert.AreEqual(val2, j.ToString());
 		}
 
 		[Test]
-		public void TestConstructor_Float()
+		public static void TestConstructor_Float()
 		{
 			string expected1 = "0.3486328";
 			float d1 = 0.3486328125f;
@@ -84,14 +104,14 @@ namespace TestBigDecimal
 			TestContext.WriteLine($"G9: \"{expected1}\" decimal: {d1.ToString("G9")}");
 			TestContext.WriteLine($"G10: \"{expected1}\" decimal: {d1.ToString("G10")}");
 			TestContext.WriteLine($"F9: \"{expected1}\" decimal: {d1.ToString("F9")}");
-			var actual1 = new BigDecimal(d1);
+			BigDecimal actual1 = new BigDecimal(d1);
 
 			Assert.AreEqual(expected1, actual1.ToString());
 			TestContext.WriteLine($"{expected1} == {actual1}");
 		}
 
 		[Test]
-		public void TestConstructor_Double()
+		public static void TestConstructor_Double()
 		{
 			//TestConstructor_Double("0", 0);
 			//TestConstructor_Double("0", 0.0);
@@ -113,22 +133,22 @@ namespace TestBigDecimal
 			TestConstructor_Double("-0.0101010101010101", -0.0101010101010101);
 		}
 
-		private void TestConstructor_Double(string expected, Double value)
+		private static void TestConstructor_Double(string expected, Double value)
 		{
-			var actual = new BigDecimal(value);
+			BigDecimal actual = new BigDecimal(value);
 			Assert.AreEqual(expected, actual.ToString());
 			TestContext.WriteLine($"{expected} == {actual}");
 		}
 
 		[Test]
-		public void TestConstructor001WriteLineA()
+		public static void TestConstructor001WriteLineA()
 		{
-			var expected1 = TestBigDecimalHelper.PrepareValue("3.141592793238462", this.Format);
-			var expected2 = TestBigDecimalHelper.PrepareValue("3.141592793238462", this.Format);
-			var π = (BigDecimal)3.141592793238462m;
-			var d = new BigDecimal(BigInteger.Parse("3141592793238462"), -15);
-			var actual1 = π.ToString();
-			var actual2 = d.ToString();
+			string? expected1 = TestBigDecimalHelper.PrepareValue("3.141592793238462", _format);
+			string? expected2 = TestBigDecimalHelper.PrepareValue("3.141592793238462", _format);
+			BigDecimal π = (BigDecimal)3.141592793238462m;
+			BigDecimal d = new BigDecimal(BigInteger.Parse("3141592793238462"), -15);
+			string? actual1 = π.ToString();
+			string? actual2 = d.ToString();
 
 			TestContext.WriteLine("π = " + actual1);
 			TestContext.WriteLine("d = " + actual2);
@@ -137,12 +157,12 @@ namespace TestBigDecimal
 		}
 
 		[Test]
-		public void TestCastingDecimal()
+		public static void TestCastingDecimal()
 		{
 			Decimal m = 0.0000000000000001m;
 
-			var e = new BigDecimal(1000000000, -25);
-			var h = (BigDecimal)m;
+			BigDecimal e = new BigDecimal(1000000000, -25);
+			BigDecimal h = (BigDecimal)m;
 
 			TestContext.WriteLine("m = " + m);
 			TestContext.WriteLine("e = " + e);
@@ -152,12 +172,12 @@ namespace TestBigDecimal
 		}
 
 		[Test]
-		public void TestCastingDouble()
+		public static void TestCastingDouble()
 		{
 			Double m = 0.0000000000000001d;
 
-			var e = new BigDecimal(1000000000, -25);
-			var h = (BigDecimal)m;
+			BigDecimal e = new BigDecimal(1000000000, -25);
+			BigDecimal h = (BigDecimal)m;
 
 			TestContext.WriteLine("m = " + m);
 			TestContext.WriteLine("e = " + e);
@@ -167,131 +187,156 @@ namespace TestBigDecimal
 		}
 
 		[Test]
-		public void TestConstructor002()
+		public static void TestConstructor002()
 		{
-			var f = new BigDecimal(-3, -2);
-			var expected = TestBigDecimalHelper.PrepareValue("-0.03", this.Format);
+			BigDecimal f = new BigDecimal(-3, -2);
+			string? expected = TestBigDecimalHelper.PrepareValue("-0.03", _format);
 			Assert.AreEqual(expected, f.ToString());
 		}
 
 		[Test]
-		public void TestConstructor003()
+		public static void TestConstructor003()
 		{
-			var g = new BigDecimal(0, -1);
+			BigDecimal g = new BigDecimal(0, -1);
 			Assert.AreEqual("0", g.ToString());
 		}
 
 		[Test]
-		public void TestConstructor004()
+		public static void TestConstructor004()
 		{
-			var value = TestBigDecimalHelper.PrepareValue("-0.0012345", this.Format);
+			string? value = TestBigDecimalHelper.PrepareValue("-0.0012345", _format);
 
-			var h = BigDecimal.Parse(value);
+			BigDecimal h = BigDecimal.Parse(value);
 			Assert.AreEqual(value, h.ToString());
 		}
 
 		[Test]
-		public void TestConstructorToString123456789()
+		public static void TestConstructorToString123456789()
 		{
 			const Int32 numbers = 123456789;
-			var expected = numbers.ToString();
-			var actual = new BigDecimal(numbers).ToString();
+			string? expected = numbers.ToString();
+			string? actual = new BigDecimal(numbers).ToString();
 
-			Assert.AreEqual(expected, actual);
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
-		public void TestNormalizeB()
+		public static void TestNormalizeB()
 		{
-			var expected = "1000000";
+			string? expected = "1000000";
 			BigDecimal bigDecimal = new BigDecimal(1000000000, -3);
 
-			var actual = bigDecimal.ToString();
-			Assert.AreEqual(expected, actual);
+			string? actual = bigDecimal.ToString();
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
-		public void TestParse001()
+		public static void TestParse001()
 		{
-			string expected = TestBigDecimalHelper.PrepareValue("0.00501", this.Format);
-			var result = BigDecimal.Parse(expected);
-			var actual = result.ToString();
+			string expected = TestBigDecimalHelper.PrepareValue("0.00501", _format);
+			BigDecimal result = BigDecimal.Parse(expected);
+			string? actual = result.ToString();
 
-			Assert.AreEqual(expected, actual);
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
-		public void TestParse002()
+		public static void TestParseEmptyString()
 		{
-			var result1 = BigDecimal.Parse("");
-			Assert.AreEqual(result1, BigDecimal.Zero);
+			BigDecimal result = BigDecimal.Parse("");
+			bool condition = result == BigDecimal.Zero;
+			
+			Assert.True(condition);
+		}
+		
+		[Test]
+		public static void TestParseString0()
+		{
 
-			var result2 = BigDecimal.Parse("0");
-			Assert.AreEqual(result2, BigDecimal.Zero);
+			BigDecimal result = BigDecimal.Parse("0");
+			Assert.True( result == BigDecimal.Zero );
 
-			var result3 = BigDecimal.Parse("-0");
-			Assert.AreEqual(result3, BigDecimal.Zero);
+		}
+		[Test]
+		public static void TestParseStringNegative0()
+		{
+		
+
+			BigDecimal result = BigDecimal.Parse("-0");
+			Assert.True(result == BigDecimal.Zero );
+		}
+		[Test]
+		public static void TestParse002()
+		{
+			BigDecimal result1 = BigDecimal.Parse("");
+			Assert.True(result1 == BigDecimal.Zero);
+
+			BigDecimal result2 = BigDecimal.Parse("0");
+			Assert.True( result2 == BigDecimal.Zero );
+
+			BigDecimal result3 = BigDecimal.Parse("-0");
+			Assert.True(result3 == BigDecimal.Zero );
 		}
 
 		[Test]
-		public void TestParse0031()
+		public static void TestParse0031()
 		{
 			string expected = "-123456789";
-			var actual = BigDecimal.Parse(expected).ToString();
+			string? actual = BigDecimal.Parse(expected).ToString();
 
-			Assert.AreEqual(expected, actual);
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
-		public void TestParse0032()
+		public static void TestParse0032()
 		{
 			string expected = "123456789";
-			var bigDecimal = BigDecimal.Parse(expected);
-			var actual = bigDecimal.ToString();
-			Assert.AreEqual(expected, actual);
+			BigDecimal bigDecimal = BigDecimal.Parse(expected);
+			string? actual = bigDecimal.ToString();
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
-		public void TestParse0033()
+		public static void TestParse0033()
 		{
-			string expected = TestBigDecimalHelper.PrepareValue("1234.56789", this.Format);
-			var actual = BigDecimal.Parse(expected).ToString();
-			Assert.AreEqual(expected, actual);
+			string expected = TestBigDecimalHelper.PrepareValue("1234.56789", _format);
+			string? actual = BigDecimal.Parse(expected).ToString();
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
-		public void TestParseScientific()
+		public static void TestParseScientific()
 		{
-			string toParse = TestBigDecimalHelper.PrepareValue("123.123E-20", this.Format);
-			string expected = TestBigDecimalHelper.PrepareValue("0.00000000000000000123123", this.Format);
+			string toParse = TestBigDecimalHelper.PrepareValue("123.123E-20", _format);
+			string expected = TestBigDecimalHelper.PrepareValue("0.00000000000000000123123", _format);
 			BigDecimal parsed = BigDecimal.Parse(toParse);
 			string actual = parsed.ToString();
-			Assert.AreEqual(expected, actual);
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
-		public void TestParseNegativeScientific()
+		public static void TestParseNegativeScientific()
 		{
-			string toParse = TestBigDecimalHelper.PrepareValue("-123.123E-20", this.Format);
-			string expected = TestBigDecimalHelper.PrepareValue("-0.00000000000000000123123", this.Format);
+			string toParse = TestBigDecimalHelper.PrepareValue("-123.123E-20", _format);
+			string expected = TestBigDecimalHelper.PrepareValue("-0.00000000000000000123123", _format);
 			BigDecimal parsed = BigDecimal.Parse(toParse);
 			string actual = parsed.ToString();
-			Assert.AreEqual(expected, actual);
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
-		public void TestParseEpsilon()
+		public static void TestParseEpsilon()
 		{
-			string expected = TestBigDecimalHelper.PrepareValue("4.9406564584124654E-324", this.Format);
+			string expected = TestBigDecimalHelper.PrepareValue("4.9406564584124654E-324", _format);
 			BigDecimal actual = BigDecimal.Parse(expected);
 
 			Assert.AreEqual(expected, BigDecimal.ToScientificENotation(actual));
 		}
 
 		[Test]
-		public void TestParseLarge()
+		public static void TestParseLarge()
 		{
-			string expected = TestBigDecimalHelper.PrepareValue("4.9406564584124654E+324", this.Format);
+			string expected = TestBigDecimalHelper.PrepareValue("4.9406564584124654E+324", _format);
 			BigDecimal actual = BigDecimal.Parse(expected);
 
 			Assert.AreEqual(expected, BigDecimal.ToScientificENotation(actual));
@@ -299,42 +344,43 @@ namespace TestBigDecimal
 
 
 		[Test]
-		public void TestParseRoundTrip()
+		public static void TestParseRoundTrip()
 		{
 			double dval = 0.6822871999174d;
-			var val = TestBigDecimalHelper.PrepareValue("0.6822871999174", this.Format);
-			var actual = BigDecimal.Parse(val);
-			var expected = (BigDecimal)dval;
-			Assert.AreEqual(expected, actual);
+			string? val = TestBigDecimalHelper.PrepareValue("0.6822871999174", _format);
+			BigDecimal actual = BigDecimal.Parse(val);
+			BigDecimal expected = (BigDecimal)dval;
+			
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
 		[NonParallelizable]
-		public void TestAlwaysTruncate()
+		public static void TestAlwaysTruncate()
 		{
-			var savePrecision = BigDecimal.Precision;
-			var expected1 = TestBigDecimalHelper.PrepareValue("3.1415926535", this.Format);
-			var expected2 = TestBigDecimalHelper.PrepareValue("-3.1415926535", this.Format);
-			var expected3 = TestBigDecimalHelper.PrepareValue("-0.0000031415", this.Format);
-			var expected4 = "-3";
+			int savePrecision = BigDecimal.Precision;
+			string? expected1 = TestBigDecimalHelper.PrepareValue("3.1415926535", _format);
+			string? expected2 = TestBigDecimalHelper.PrepareValue("-3.1415926535", _format);
+			string? expected3 = TestBigDecimalHelper.PrepareValue("-0.0000031415", _format);
+			string? expected4 = "-3";
 
-			var actual1 = "";
-			var actual2 = "";
-			var actual3 = "";
-			var actual4 = "";
+			string? actual1 = "";
+			string? actual2 = "";
+			string? actual3 = "";
+			string? actual4 = "";
 
 			try
 			{
 				BigDecimal.Precision = 10;
 				BigDecimal.AlwaysTruncate = true;
 
-				var val1 = TestBigDecimalHelper.PrepareValue("3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535", this.Format);
+				string? val1 = TestBigDecimalHelper.PrepareValue("3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535", _format);
 				BigDecimal parsed1 = BigDecimal.Parse(val1);
 
-				var val2 = TestBigDecimalHelper.PrepareValue("-3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535", this.Format);
+				string? val2 = TestBigDecimalHelper.PrepareValue("-3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535", _format);
 				BigDecimal parsed2 = BigDecimal.Parse(val2);
 
-				var val3 = TestBigDecimalHelper.PrepareValue("-0.00000314159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535", this.Format);
+				string? val3 = TestBigDecimalHelper.PrepareValue("-0.00000314159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535", _format);
 				BigDecimal parsed3 = BigDecimal.Parse(val3);
 
 				BigDecimal parsed4 = BigDecimal.Parse("-3");
@@ -358,43 +404,43 @@ namespace TestBigDecimal
 
 		[Test]
 		[NonParallelizable]
-		public void TestTruncateOnAllArithmeticOperations()
+		public static void TestTruncateOnAllArithmeticOperations()
 		{
-			var savePrecision = BigDecimal.Precision;
+			int savePrecision = BigDecimal.Precision;
 
 			BigDecimal mod1 = BigDecimal.Parse("3141592653589793238462643383279502");
 			BigDecimal mod2 = BigDecimal.Parse("27182818284590452");
 			//BigDecimal neg1 = BigDecimal.Parse("-3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647");
 
-			var val1 = TestBigDecimalHelper.PrepareValue("3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647", this.Format);
+			string? val1 = TestBigDecimalHelper.PrepareValue("3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647", _format);
 			BigDecimal lrg1 = BigDecimal.Parse(val1);
 
-			var val2 = TestBigDecimalHelper.PrepareValue("2.718281828459045235360287471352662497757247093699959574966967", this.Format);
+			string? val2 = TestBigDecimalHelper.PrepareValue("2.718281828459045235360287471352662497757247093699959574966967", _format);
 			BigDecimal lrg2 = BigDecimal.Parse(val2);
 
-			var expected1 = TestBigDecimalHelper.PrepareValue("5.859874482", this.Format);
-			var expected2 = TestBigDecimalHelper.PrepareValue("0.423310825", this.Format);
-			var expected3 = TestBigDecimalHelper.PrepareValue("8.539734222", this.Format);
-			var expected4 = TestBigDecimalHelper.PrepareValue("0.865255979", this.Format);
-			var expected5 = TestBigDecimalHelper.PrepareValue("9.869604401", this.Format);
-			var expected6 = TestBigDecimalHelper.PrepareValue("148.4131591", this.Format);
-			var expected7 = "80030773195";
-			var expected8 = TestBigDecimalHelper.PrepareValue("-3.14159265", this.Format);
-			var expected9 = "3";
-			var expected10 = "4";
-			var expected11 = TestBigDecimalHelper.PrepareValue("3.141592653", this.Format);
+			string? expected1 = TestBigDecimalHelper.PrepareValue("5.859874482", _format);
+			string? expected2 = TestBigDecimalHelper.PrepareValue("0.423310825", _format);
+			string? expected3 = TestBigDecimalHelper.PrepareValue("8.539734222", _format);
+			string? expected4 = TestBigDecimalHelper.PrepareValue("0.865255979", _format);
+			string? expected5 = TestBigDecimalHelper.PrepareValue("9.869604401", _format);
+			string? expected6 = TestBigDecimalHelper.PrepareValue("148.4131591", _format);
+			string? expected7 = "80030773195";
+			string? expected8 = TestBigDecimalHelper.PrepareValue("-3.14159265", _format);
+			string? expected9 = "3";
+			string? expected10 = "4";
+			string? expected11 = TestBigDecimalHelper.PrepareValue("3.141592653", _format);
 
-			var actual1 = "";
-			var actual2 = "";
-			var actual3 = "";
-			var actual4 = "";
-			var actual5 = "";
-			var actual6 = "";
-			var actual7 = "";
-			var actual8 = "";
-			var actual9 = "";
-			var actual10 = "";
-			var actual11 = "";
+			string? actual1 = "";
+			string? actual2 = "";
+			string? actual3 = "";
+			string? actual4 = "";
+			string? actual5 = "";
+			string? actual6 = "";
+			string? actual7 = "";
+			string? actual8 = "";
+			string? actual9 = "";
+			string? actual10 = "";
+			string? actual11 = "";
 
 			try
 			{

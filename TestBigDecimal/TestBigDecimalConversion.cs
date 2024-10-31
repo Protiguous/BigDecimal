@@ -24,7 +24,7 @@ namespace TestBigDecimal
 			var bigDecimal = BigDecimal.Parse(LongNumbers);
 			var actual = bigDecimal.WholeValue;
 
-			Assert.AreEqual(expected, actual);
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 	}
 }

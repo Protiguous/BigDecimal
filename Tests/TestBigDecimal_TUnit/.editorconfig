@@ -1,0 +1,26 @@
+
+# All files
+[*]
+indent_style = space
+
+# Microsoft .NET properties
+csharp_style_expression_bodied_accessors = true:suggestion
+csharp_style_expression_bodied_constructors = false:suggestion
+csharp_style_expression_bodied_methods = false:suggestion
+csharp_style_expression_bodied_properties = false:suggestion
+csharp_style_namespace_declarations = file_scoped:error
+dotnet_style_qualification_for_event = true:warning
+dotnet_style_qualification_for_field = true:warning
+dotnet_style_qualification_for_method = true:warning
+dotnet_style_qualification_for_property = true:warning
+
+# ReSharper inspection severities
+resharper_arrange_local_function_body_highlighting = suggestion
+
+# Xml files
+
+# IDE0161: Convert to file-scoped namespace
+dotnet_diagnostic.IDE0161.severity = error
+
+[*.xml]
+indent_size = 2

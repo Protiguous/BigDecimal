@@ -15,7 +15,7 @@ namespace TestBigDecimal
 	[Culture("en-US,ru-RU")]
 	public class TestBigDecimalFunctions
 	{
-		private NumberFormatInfo Format { get { return Thread.CurrentThread.CurrentCulture.NumberFormat; } }
+		private static NumberFormatInfo _format { get; } = Thread.CurrentThread.CurrentCulture.NumberFormat;
 
 		[Test]
 		public void TestGCD()
@@ -37,7 +37,7 @@ namespace TestBigDecimal
 			var left = BigDecimal.Parse(expected);
 			var right1 = BigDecimal.Parse(expected);
 
-			var val = TestBigDecimalHelper.PrepareValue("30303.5", this.Format);
+			var val = TestBigDecimalHelper.PrepareValue("30303.5", _format);
 			var right2 = BigDecimal.Parse(val);
 			var right3 = BigDecimal.Parse("30304");
 
@@ -53,14 +53,14 @@ namespace TestBigDecimal
 		[Test]
 		public void TestMax()
 		{
-			var expected = TestBigDecimalHelper.PrepareValue("30304.1", this.Format);
+			var expected = TestBigDecimalHelper.PrepareValue("30304.1", _format);
 
 			var left1 = BigDecimal.Parse("30304");
 
-			var val2 = TestBigDecimalHelper.PrepareValue("-30304.2", this.Format);
+			var val2 = TestBigDecimalHelper.PrepareValue("-30304.2", _format);
 			var left2 = BigDecimal.Parse(val2);
 
-			var val3 = TestBigDecimalHelper.PrepareValue("30304.01", this.Format);
+			var val3 = TestBigDecimalHelper.PrepareValue("30304.01", _format);
 			var left3 = BigDecimal.Parse(val3);
 			var right = BigDecimal.Parse(expected);
 
@@ -136,11 +136,11 @@ namespace TestBigDecimal
 			BigDecimal largeNegative = BigDecimal.Parse(largeNegativeString);
 			Assert.AreEqual(BigInteger.MinusOne.Sign, largeNegative.Sign, largeNegativeString);
 
-			string highPrecisionNegativeString = TestBigDecimalHelper.PrepareValue("-2.2685077023948547418271375393606809233149150201282920942551781108927727789384397020382853", this.Format);
+			string highPrecisionNegativeString = TestBigDecimalHelper.PrepareValue("-2.2685077023948547418271375393606809233149150201282920942551781108927727789384397020382853", _format);
 			BigDecimal highPrecisionNegative = BigDecimal.Parse(highPrecisionNegativeString);
 			Assert.AreEqual(BigInteger.MinusOne.Sign, highPrecisionNegative.Sign, highPrecisionNegativeString);
 
-			string smallNegativeString = TestBigDecimalHelper.PrepareValue("-0.000000000000000000000000000022680000000000000000000000000000150201282920942551781108927727789384397020382853", this.Format);
+			string smallNegativeString = TestBigDecimalHelper.PrepareValue("-0.000000000000000000000000000022680000000000000000000000000000150201282920942551781108927727789384397020382853", _format);
 			BigDecimal smallNegative = BigDecimal.Parse(smallNegativeString);
 			Assert.AreEqual(BigInteger.MinusOne.Sign, smallNegative.Sign, smallNegativeString);
 		}
@@ -148,7 +148,7 @@ namespace TestBigDecimal
 		[Test]
 		public void TestGoldenIrrational()
 		{
-			var val = TestBigDecimalHelper.PrepareValue("1.6180339887498948482045868343656381177203091798057628621354486227052604628189024497072072041893911374847540880753868917521266338622235369317931800607667263544333890865959395829056383226613199282902678806752087668925017116962070322210432162695486262963136144381497587012203408058879544547492461856953648644492", this.Format);
+			var val = TestBigDecimalHelper.PrepareValue("1.6180339887498948482045868343656381177203091798057628621354486227052604628189024497072072041893911374847540880753868917521266338622235369317931800607667263544333890865959395829056383226613199282902678806752087668925017116962070322210432162695486262963136144381497587012203408058879544547492461856953648644492", _format);
 			var goldenRatio = BigDecimal.Parse(val);
 
 			TestContext.Write("GoldenRatio: ");
@@ -175,7 +175,7 @@ namespace TestBigDecimal
 			var up = new BigDecimal(0.50001d);
 			var down = new BigDecimal(0.49m);
 
-			var val = TestBigDecimalHelper.PrepareValue("1.5", this.Format);
+			var val = TestBigDecimalHelper.PrepareValue("1.5", _format);
 			var oneAndAhalf = BigDecimal.Parse(val);
 
 			var negEightPointFive = new BigDecimal(-8.5d);
@@ -339,14 +339,14 @@ namespace TestBigDecimal
 			BigDecimal parsed7 = new BigDecimal(3, -1);
 			BigDecimal parsed8 = new BigDecimal(-3, -1);
 
-			var expected1 = TestBigDecimalHelper.PrepareValue("0.1415926535", this.Format);
-			var expected2 = TestBigDecimalHelper.PrepareValue("0.1415926535", this.Format);
-			var expected3 = TestBigDecimalHelper.PrepareValue("0.000031415926535", this.Format);
-			var expected4 = TestBigDecimalHelper.PrepareValue("0.000031415926535", this.Format);
+			var expected1 = TestBigDecimalHelper.PrepareValue("0.1415926535", _format);
+			var expected2 = TestBigDecimalHelper.PrepareValue("0.1415926535", _format);
+			var expected3 = TestBigDecimalHelper.PrepareValue("0.000031415926535", _format);
+			var expected4 = TestBigDecimalHelper.PrepareValue("0.000031415926535", _format);
 			var expected5 = "0";
 			var expected6 = "0";
-			var expected7 = TestBigDecimalHelper.PrepareValue("0.3", this.Format);
-			var expected8 = TestBigDecimalHelper.PrepareValue("0.3", this.Format);
+			var expected7 = TestBigDecimalHelper.PrepareValue("0.3", _format);
+			var expected8 = TestBigDecimalHelper.PrepareValue("0.3", _format);
 
 			var result1 = parsed1.GetFractionalPart();
 			var result2 = parsed2.GetFractionalPart();
@@ -377,26 +377,26 @@ namespace TestBigDecimal
 		}
 
 		[Test]
-		public void TestSignifigantDigits()
+		public void TestSignificantDigits()
 		{
 			const Int32 expected1 = 19;
 			var number1 = new BigDecimal(12345678901234567890, -10);
-			var result1 = number1.SignifigantDigits;
+			var result1 = number1.SignificantDigits;
 			Assert.AreEqual(expected1, result1);
 
 			const Int32 expected2 = 9;
 			var number2 = new BigDecimal(123456789, 1);
-			var result2 = number2.SignifigantDigits;
+			var result2 = number2.SignificantDigits;
 			Assert.AreEqual(expected2, result2);
 
 			const Int32 expected3 = 19;
 			var number3 = new BigDecimal(BigInteger.Parse("-12345678901234567890"), -10);
-			var result3 = number3.SignifigantDigits;
+			var result3 = number3.SignificantDigits;
 			Assert.AreEqual(expected3, result3);
 
 			const Int32 expected4 = 9;
 			var number4 = new BigDecimal(-123456789, 1);
-			var result4 = number4.SignifigantDigits;
+			var result4 = number4.SignificantDigits;
 			Assert.AreEqual(expected4, result4);
 		}
 
@@ -472,20 +472,24 @@ namespace TestBigDecimal
 			BigDecimal.Precision = 1000;
 			//BigDecimal.AlwaysTruncate = true;
 
-			int precision = 1000;
+			const int precision = 1000;
 			// This value comes from a different application; precise calculator
-			string expected = "2.718281828459045235360287471352662497757247093699959574966967627724076630353547594571382178525166427427466391932003059921817413596629043572900334295260595630738132328627943490763233829880753195251019011573834187930702154089149934884167509244761460668082264800168477411853742345442437107539077744992069551702761838606261331384583000752044933826560297606737113200709328709127443747047230696977209310141692836819025515108657463772111252389784425056953696770785449969967946864454905987931636889230098793127736178215424999229576351482208269895193668033182528869398496465105820939239829488793320362509443117301238197068416140397019837679320683282376464804295311802328782509819455815301756717361332069811250996181881593041690351598888519345807273866738589422879228499892086805825749279610484198444363463244968487560233624827041978623209002160990235304369941849146314093431738143640546253152096183690888707016768396424378140592714563549061303107208510383750510115747704171898610687396965521267154688957035035";
+			const string expected = "2.718281828459045235360287471352662497757247093699959574966967627724076630353547594571382178525166427427466391932003059921817413596629043572900334295260595630738132328627943490763233829880753195251019011573834187930702154089149934884167509244761460668082264800168477411853742345442437107539077744992069551702761838606261331384583000752044933826560297606737113200709328709127443747047230696977209310141692836819025515108657463772111252389784425056953696770785449969967946864454905987931636889230098793127736178215424999229576351482208269895193668033182528869398496465105820939239829488793320362509443117301238197068416140397019837679320683282376464804295311802328782509819455815301756717361332069811250996181881593041690351598888519345807273866738589422879228499892086805825749279610484198444363463244968487560233624827041978623209002160990235304369941849146314093431738143640546253152096183690888707016768396424378140592714563549061303107208510383750510115747704171898610687396965521267154688957035035";
 
 			Stopwatch timer = Stopwatch.StartNew();
 
-			string actual = BigDecimal.Round(BigDecimal.ApproximateE(precision), precision).ToString();
+			BigDecimal approximateE = BigDecimal.ApproximateE(precision);
+
+			BigDecimal bigDecimal = BigDecimal.Round(approximateE, precision);
+			
+			string actual = bigDecimal.ToString();
 
 			TimeSpan timeElapsed = timer.Elapsed;
 			TestContext.WriteLine($"Time Elapsed (ms): {timeElapsed.TotalMilliseconds}");
 
 			actual = actual.Substring(0, expected.Length);
 
-			Assert.AreEqual(expected, actual);
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 
 		[Test]
@@ -507,7 +511,7 @@ namespace TestBigDecimal
 
 			actual = actual.Substring(0, expected.Length);
 
-			Assert.AreEqual(expected, actual);
+			Assert.True(BigDecimal.Equals(expected, actual));
 		}
 	}
 }

@@ -18,8 +18,7 @@ namespace ExtendedNumerics.Helpers
 		/// </summary>
 		internal static BigDecimal GetPrecisionTarget(int precision)
 		{
-			var adjustedPrecision = precision;
-			return new BigDecimal(BigInteger.One, -adjustedPrecision);
+			return new BigDecimal(BigInteger.One, -precision /*adjustedPrecision*/);
 		}
 
 		/// <summary>
@@ -86,24 +85,30 @@ namespace ExtendedNumerics.Helpers
 			var result = sumStart;
 			var n = counterStart;
 
-			BigDecimal lastResult = -1;
-			BigDecimal difference = 1;
-			BigDecimal sign = 1;
+			BigDecimal lastResult = BigDecimal.MinusOne;
+			BigDecimal difference = BigDecimal.One;
+			BigDecimal sign = BigDecimal.One;
 
 			var counter = 0;
 
+			precision *= 2;
+
 			do
 			{
-				if (counter > (precision * 2))
+				if (counter > precision)
 				{
 					break;
 				}
 
-				BigDecimal denominator = n;
+				BigDecimal denominator;
 
 				if (factorialDenominator)
 				{
-					denominator = new BigDecimal(BigIntegerHelper.FastFactorial.Factorial(n));
+					denominator = BigIntegerHelper.FastFactorial.Factorial(n);
+				}
+				else
+				{
+					denominator = n;
 				}
 
 				var left = BigDecimal.One / denominator;
@@ -111,7 +116,7 @@ namespace ExtendedNumerics.Helpers
 
 				result += left * right * sign;
 
-				if (lastResult != -1)
+				if (lastResult != BigDecimal.MinusOne)
 				{
 					difference = lastResult - result;
 				}

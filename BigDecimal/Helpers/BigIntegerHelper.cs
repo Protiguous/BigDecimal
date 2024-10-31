@@ -12,8 +12,8 @@ namespace ExtendedNumerics.Helpers
 
 		public static BigInteger GCD(BigInteger value1, BigInteger value2)
 		{
-			var absValue1 = BigInteger.Abs(value1);
-			var absValue2 = BigInteger.Abs(value2);
+			BigInteger absValue1 = BigInteger.Abs(value1);
+			BigInteger absValue2 = BigInteger.Abs(value2);
 
 			while ((absValue1 != BigInteger.Zero) && (absValue2 != BigInteger.Zero))
 			{
@@ -29,10 +29,26 @@ namespace ExtendedNumerics.Helpers
 			return BigInteger.Max(absValue1, absValue2);
 		}
 
+		/// <summary>
+		/// Return the total number of digits in a <see cref="BigInteger"/>.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		/// <remarks>This seems to be extremely fast and accurate.</remarks>
+		public static Int32 NumberOfDigits(this BigInteger value)
+		{
+			return (Int32)Math.Ceiling(BigInteger.Log(value * value.Sign, 10));
+		}
+
+		/// <summary>
+		/// <see cref="NumberOfDigits"/> should be faster.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <returns></returns>
 		public static Int32 GetLength(this BigInteger source)
 		{
-			var result = 0;
-			var copy = BigInteger.Abs(source);
+			int result = 0;
+			BigInteger copy = BigInteger.Abs(source);
 			while (copy > BigInteger.Zero)
 			{
 				copy /= Ten;
@@ -50,6 +66,35 @@ namespace ExtendedNumerics.Helpers
 			}
 		}
 
+		/// <summary>
+		///     Return the significant (leading) digits, ignoring all trailing zeros, and ignoring any leading negative sign.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+#if NET5_0_OR_GREATER
+		public static ReadOnlySpan<Char> GetSignificantDigitsString(this BigInteger value)
+		{
+			return value.ToString().AsSpan().TrimEnd('0').TrimStart('-');
+		}
+
+
+		public static Int32 GetSignificantDigits(this BigInteger value)
+		{
+			//TODO Is there a way to use NumberOfDigits() and account for zeros?
+			return value.GetSignificantDigitsString().Length;
+		}
+		
+		public static Int32 GetSignificantDigitsCount(this BigInteger value)
+		{
+			//TODO Is there a way to use NumberOfDigits() and account for zeros?
+			return value.GetSignificantDigitsString().Length;
+		}
+#else
+		public static String GetSignificantDigitsString(this BigInteger value)
+		{
+			return value.ToString().TrimEnd('0').TrimStart('-');
+		}
+
 		public static Int32 GetSignificantDigits(this BigInteger value)
 		{
 			if (value.IsZero)
@@ -57,18 +102,29 @@ namespace ExtendedNumerics.Helpers
 				return 0;
 			}
 
-			var valueString = value.ToString().TrimEnd('0'); //CONFIRM Is this correct?
+			string? valueString = value.ToString().TrimEnd('0'); //CONFIRM Is this correct?
 
 			if (String.IsNullOrEmpty(valueString))
 			{
 				return 0;
 			}
+
 			if (value < BigInteger.Zero)
 			{
 				return valueString.Length - 1;
 			}
+
 			return valueString.Length;
 		}
+
+		public static Int32 GetSignificantDigitsCount(this BigInteger value)
+		{
+			//TODO Is there a way to use NumberOfDigits() and account for zeros?
+			return value.GetSignificantDigitsString().Length;
+		}
+#endif
+
+
 
 		public static Boolean IsCoprime(BigInteger value1, BigInteger value2) => GCD(value1, value2) == BigInteger.One;
 
@@ -76,8 +132,8 @@ namespace ExtendedNumerics.Helpers
 
 		public static BigInteger LCM(BigInteger num1, BigInteger num2)
 		{
-			var absValue1 = BigInteger.Abs(num1);
-			var absValue2 = BigInteger.Abs(num2);
+			BigInteger absValue1 = BigInteger.Abs(num1);
+			BigInteger absValue2 = BigInteger.Abs(num2);
 			return (absValue1 * absValue2) / GCD(absValue1, absValue2);
 		}
 
@@ -120,14 +176,14 @@ namespace ExtendedNumerics.Helpers
 				return value;
 			}
 
-			var upperbound = value;
-			var lowerbound = BigInteger.Zero;
+			BigInteger upperbound = value;
+			BigInteger lowerbound = BigInteger.Zero;
 
 			do
 			{
-				var nval = (upperbound + lowerbound) >> 1;
+				BigInteger nval = (upperbound + lowerbound) >> 1;
 
-				var tstsq = BigInteger.Pow(nval, root);
+				BigInteger tstsq = BigInteger.Pow(nval, root);
 
 				if (tstsq > value)
 				{
@@ -160,10 +216,10 @@ namespace ExtendedNumerics.Helpers
 				return BigInteger.Zero;
 			}
 
-			var n = BigInteger.Zero;
-			var p = BigInteger.Zero;
-			var low = BigInteger.Zero;
-			var high = BigInteger.Abs(input);
+			BigInteger n = BigInteger.Zero;
+			BigInteger p = BigInteger.Zero;
+			BigInteger low = BigInteger.Zero;
+			BigInteger high = BigInteger.Abs(input);
 
 			while (high > (low + BigInteger.One))
 			{
@@ -203,7 +259,7 @@ namespace ExtendedNumerics.Helpers
 			}
 
 #if NET5_0_OR_GREATER || NETCOREAPP || NETSTANDARD2_1_OR_GREATER
-		var parts = numberString.Split('/', StringSplitOptions.RemoveEmptyEntries).Select(static s => s.Trim() ).ToList();
+			List<string>? parts = numberString.Split('/', StringSplitOptions.RemoveEmptyEntries).Select(static s => s.Trim()).ToList();
 #else
 			List<string> parts = numberString.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries).Select(static s => s.Trim()).ToList();
 #endif
@@ -215,8 +271,8 @@ namespace ExtendedNumerics.Helpers
 
 			try
 			{
-				var numerator = BigDecimal.Parse(parts[0]);
-				var denominator = BigDecimal.Parse(parts[1]);
+				BigDecimal numerator = BigDecimal.Parse(parts[0]);
+				BigDecimal denominator = BigDecimal.Parse(parts[1]);
 
 				result = BigDecimal.Divide(numerator, denominator);
 				return true;
@@ -259,12 +315,16 @@ namespace ExtendedNumerics.Helpers
 			/// <param name="to"></param>
 			private static BigInteger MultiplyRange(BigInteger from, BigInteger to)
 			{
-				var diff = to - from;
+				BigInteger diff = to - from;
 				if (diff == BigInteger.One) { return from * to; }
 				if (diff == BigInteger.Zero) { return from; }
 
-				var half = (from + to) / Two;
-				return BigInteger.Multiply(MultiplyRange(from, half), MultiplyRange(half + BigInteger.One, to));
+				BigInteger half = (from + to) / Two;
+
+				BigInteger left = MultiplyRange(from, half);
+				BigInteger right = MultiplyRange(half + BigInteger.One, to);
+
+				return BigInteger.Multiply(left, right);
 			}
 		}
 

@@ -18,7 +18,7 @@ namespace TestBigDecimal
 			result.AppendLine($"	Exponent: {bigDecimal.Exponent}");
 			result.AppendLine($"	DecimalIndex: {bigDecimal.GetDecimalIndex()}");
 			result.AppendLine($"	Length: {bigDecimal.Length}");
-			result.AppendLine($"	SignifigantDigits: {bigDecimal.SignifigantDigits}");
+			result.AppendLine($"	SignificantDigits: {bigDecimal.SignificantDigits}");
 			result.AppendLine("}");
 
 			return result.ToString();
